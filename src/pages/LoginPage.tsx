@@ -9,23 +9,41 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { login } from "@/http/api";
+import { useMutation } from "@tanstack/react-query";
 import { useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
+  // Mutations
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: () => {
+      console.log("Login successfull");
+
+      //redirect to dashboard
+      navigate('/dashboard/home')
+    },
+  });
 
   const handleSubmitLogin = () => {
     const email = emailRef.current?.value;
-    const password = passwordRef.current?.value
+    const password = passwordRef.current?.value;
 
-   console.log("data",{email,password});
-   
+    console.log("data", { email, password });
+
+    if(!email || !password){
+      return alert("Enter your email and password")
+    }
+
+    mutation.mutate({ email, password });
+
     //make server call
-
-  }
+  };
 
   return (
     <section className="flex justify-center items-center h-screen">
@@ -54,7 +72,9 @@ const LoginPage = () => {
         </CardContent>
         <CardFooter>
           <div className="w-full">
-            <Button onClick={handleSubmitLogin} className="w-full">Sign in</Button>
+            <Button onClick={handleSubmitLogin} className="w-full">
+              Sign in
+            </Button>
             <div className="mt-4 text-center text-sm">
               Don't have an account?{" "}
               <Link to={"/auth/register"} className="underline">
