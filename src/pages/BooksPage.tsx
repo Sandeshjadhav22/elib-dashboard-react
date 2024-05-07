@@ -34,11 +34,11 @@ import {
 import { getBooks } from "@/http/api";
 import { Book } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { CirclePlus, MoreHorizontal } from "lucide-react";
+import { CirclePlus,  MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const BooksPage = () => {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isError, } = useQuery({
     queryKey: ["books"],
     queryFn: getBooks,
     staleTime: 10000, // in milliseconds
@@ -98,6 +98,8 @@ const BooksPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
+              {isError && <span>Something went wrong</span>}
+              {/* {isLoading && <LoaderCircle/>} */}
               {data?.data.map((book: Book) => {
                 return (
                   <TableRow key={book._id}>
