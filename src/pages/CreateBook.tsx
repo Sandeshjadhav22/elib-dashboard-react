@@ -1,3 +1,5 @@
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,82 +16,174 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+
+const formSchema = z.object({
+  title: z.string().min(2, {
+    message: "Title must be at least 2 characters.",
+  }),
+  genre: z.string().min(2, {
+    message: "Genre must be at least 2 characters.",
+  }),
+  description: z.string().min(2, {
+    message: "Description must be at least 2 characters.",
+  }),
+
+  coverImage: z.instanceof(FileList).refine((file) => {
+    return file.length === 1;
+  }, "Cover Image is required"),
+  file: z.instanceof(FileList).refine((file) => {
+    return file.length === 1;
+  }, "Book PDF is required"),
+});
 
 const CreateBook = () => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      genre: "",
+      description: "",
+    },
+  });
+
+  const coverImageRef = form.register("coverImage");
+  const fileRef = form.register("file");
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
+
   return (
     <section>
-      <div className="flex items-center justify-between">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard/home">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex items-center justify-between">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/dashboard/home">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
 
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard/books">Book</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/dashboard/books">Book</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
 
-            <BreadcrumbItem>
-              <BreadcrumbPage>Create</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <div className="flex items-center gap-3">
-            <Button variant={"outline"}>
-              {/* <CirclePlus size={20} /> */}
-              <span className="ml-2">cancel</span>
-            </Button>
-            <Button>
-              {/* <CirclePlus size={20} /> */}
-              <span className="ml-2">Submit</span>
-            </Button>
-        </div>
-      </div>
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Create a new book</CardTitle>
-          <CardDescription>
-            Fill out the form below to create new book
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-            <form>
-            <div className="grid gap-6">
-                      <div className="grid gap-3">
-                        <Label htmlFor="name">Name</Label>
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Create</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="flex items-center gap-3">
+              <Button variant={"outline"}>
+                <span className="ml-2">cancel</span>
+              </Button>
+              <Button type="submit">
+                <span className="ml-2">Submit</span>
+              </Button>
+            </div>
+          </div>
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Create a new book</CardTitle>
+              <CardDescription>
+                Fill out the form below to create new book
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input type="text" className="w-full" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="genre"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Genre</FormLabel>
+                      <FormControl>
+                        <Input type="text" className="w-full" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>description</FormLabel>
+                      <FormControl>
+                        <Textarea className="min-h-32" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="coverImage"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>cover Image</FormLabel>
+                      <FormControl>
                         <Input
-                          id="name"
-                          type="text"
+                          type="file"
                           className="w-full"
-                          defaultValue="Happy habits"
+                          {...coverImageRef}
                         />
-                      </div>
-                      <div className="grid gap-3">
-                        <Label htmlFor="=genre">Genre</Label>
-                        <Input
-                          id="genre"
-                          type="text"
-                          className="w-full"
-                          defaultValue="Sci-Fi"
-                        />
-                      </div>
-                      <div className="grid gap-3">
-                        <Label htmlFor="description">Description</Label>
-                        <Textarea 
-                          id="description"
-                          defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc."
-                          className="min-h-32"
-                        />
-                      </div>
-                    </div>
-            </form>
-        </CardContent>
-      </Card>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="file"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Book File</FormLabel>
+                      <FormControl>
+                        <Input type="file" className="w-full" {...fileRef} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </form>
+      </Form>
     </section>
   );
 };
