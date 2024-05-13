@@ -21,3 +21,9 @@ export const register = async (data: {name:string , email:string; password: stri
 
 
 export const getBooks = async () => api.get('/api/books')
+
+export const createBook = async(data: FormData) => api.post('/api/books',data,{
+    headers:{
+        'Content-Type': 'multipart/form-data',
+    }
+})

@@ -27,6 +27,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
+import { createBook } from "@/http/api";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -60,9 +62,29 @@ const CreateBook = () => {
   const coverImageRef = form.register("coverImage");
   const fileRef = form.register("file");
 
+   // Mutations
+   const mutation = useMutation({
+    mutationFn: createBook,
+    onSuccess: () => {
+      console.log("create book successfull");
+      
+    },
+  });
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+
+    const formdata = new FormData();
+
+    formdata.append("title", values.title);
+    formdata.append("genre", values.genre);
+    formdata.append("description", values.description);
+    formdata.append("coverImage", values.coverImage[0]);
+    formdata.append("file", values.file[0]);
+
+    mutation.mutate(formdata)
+
     console.log(values);
   }
 
