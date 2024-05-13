@@ -29,6 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { createBook } from "@/http/api";
 import { useMutation } from "@tanstack/react-query";
+import { LoaderCircle } from "lucide-react";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -114,7 +115,8 @@ const CreateBook = () => {
               <Button variant={"outline"}>
                 <span className="ml-2">cancel</span>
               </Button>
-              <Button type="submit">
+              <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <LoaderCircle className='animate-spin'/>}
                 <span className="ml-2">Submit</span>
               </Button>
             </div>
