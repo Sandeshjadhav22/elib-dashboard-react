@@ -28,8 +28,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { createBook } from "@/http/api";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -51,6 +52,9 @@ const formSchema = z.object({
 });
 
 const CreateBook = () => {
+
+  const navigate = useNavigate()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,11 +67,16 @@ const CreateBook = () => {
   const coverImageRef = form.register("coverImage");
   const fileRef = form.register("file");
 
+  const queryClient = useQueryClient()
+
+
    // Mutations
    const mutation = useMutation({
     mutationFn: createBook,
     onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['books']})
       console.log("create book successfull");
+      navigate('/dashboard/books')
       
     },
   });
