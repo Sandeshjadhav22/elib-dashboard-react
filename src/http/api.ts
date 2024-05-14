@@ -1,6 +1,5 @@
 import axios from "axios";
 import useTokenStore from "@/store";
-import { Book } from "@/types";
 
 const api = axios.create({
   baseURL: "http://localhost:5513",
@@ -40,7 +39,7 @@ export const createBook = async (data: FormData) =>
     },
   });
 
-export const deleteBook = async (bookId: Book) => {
+export const deleteBook = async (bookId: string) => {
  return api.delete(`/api/books/${bookId}`);
 
 }
