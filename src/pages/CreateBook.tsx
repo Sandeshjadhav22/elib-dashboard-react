@@ -128,7 +128,7 @@ const CreateBook = () => {
               </Link>
               <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending && <LoaderCircle className='animate-spin'/>}
-                <span className="ml-2">Submit</span>
+                <span className="ml-1">Submit</span>
               </Button>
             </div>
           </div>

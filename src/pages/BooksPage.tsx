@@ -32,18 +32,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getBooks } from "@/http/api";
+import { deleteBook, getBooks } from "@/http/api";
 import { Book } from "@/types";
-import { useQuery } from "@tanstack/react-query";
-import { CirclePlus, MoreHorizontal } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CirclePlus, LoaderCircle, MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const BooksPage = () => {
+  const queryClient = useQueryClient()
   const { data, isError, isLoading } = useQuery({
     queryKey: ["books"],
     queryFn: getBooks,
     staleTime: 10000, // in milliseconds
   });
+ 
+   // Mutations
+   const mutation = useMutation({
+    mutationFn: deleteBook,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey:['books']})
+      console.log("Delete book successfull");
+      
+    },
+  });
+
+
+  const handleDelete = async(bookId: Book) => {
+    mutation.mutate(bookId)
+  }
+
 
   if (isLoading) {
     return (
@@ -195,7 +212,10 @@ const BooksPage = () => {
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction>Continue</AlertDialogAction>
+                                <Button onClick={() => handleDelete(book._id)} disabled={mutation.isPending}>
+                                  {mutation.isPending && <LoaderCircle className="animate-spin"/>}
+                                  <span className="ml-2">Continue</span>
+                                  </Button>
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
