@@ -194,7 +194,7 @@ const BooksPage = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <Link to={"/dashboard/books/edit"}><DropdownMenuItem>Edit</DropdownMenuItem></Link>
                           {/* <DropdownMenuItem>Delete</DropdownMenuItem> */}
                           <div className="ml-2 mb-2 text-sm ">
                           <AlertDialog>
