@@ -1,4 +1,13 @@
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
@@ -38,29 +47,29 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CirclePlus, LoaderCircle, MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 
+
+
+
 const BooksPage = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { data, isError, isLoading } = useQuery({
     queryKey: ["books"],
     queryFn: getBooks,
     staleTime: 10000, // in milliseconds
   });
- 
-   // Mutations
-   const mutation = useMutation({
+
+  // Mutations
+  const mutation = useMutation({
     mutationFn: deleteBook,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey:['books']})
+      queryClient.invalidateQueries({ queryKey: ["books"] });
       console.log("Delete book successfull");
-      
     },
   });
 
-
-  const handleDelete = async(bookId: string) => {
-    mutation.mutate(bookId)
-  }
-
+  const handleDelete = async (bookId: string) => {
+    mutation.mutate(bookId);
+  };
 
   if (isLoading) {
     return (
@@ -194,31 +203,45 @@ const BooksPage = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <Link to={"/dashboard/books/edit"}><DropdownMenuItem>Edit</DropdownMenuItem></Link>
+                          <Link 
+                            to={{
+                              pathname: "/dashboard/books/edit",
+                             
+                            }}
+                           
+                           
+                          >
+                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                          </Link>
                           {/* <DropdownMenuItem>Delete</DropdownMenuItem> */}
                           <div className="ml-2 mb-2 text-sm ">
-                          <AlertDialog>
-                            <AlertDialogTrigger>Delete</AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Are you absolutely sure?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will
-                                  permanently delete your book and remove
-                                  your data from our servers.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <Button onClick={() => handleDelete(book._id)} disabled={mutation.isPending}>
-                                  {mutation.isPending && <LoaderCircle className="animate-spin"/>}
-                                  <span className="ml-2">Continue</span>
+                            <AlertDialog>
+                              <AlertDialogTrigger>Delete</AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you absolutely sure?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently delete your book and remove your
+                                    data from our servers.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <Button
+                                    onClick={() => handleDelete(book._id)}
+                                    disabled={mutation.isPending}
+                                  >
+                                    {mutation.isPending && (
+                                      <LoaderCircle className="animate-spin" />
+                                    )}
+                                    <span className="ml-2">Continue</span>
                                   </Button>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </div>
                         </DropdownMenuContent>
                       </DropdownMenu>

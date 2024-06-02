@@ -30,7 +30,7 @@ import { useForm } from "react-hook-form";
 import { createBook } from "@/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,  } from "react-router-dom";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -53,13 +53,14 @@ const formSchema = z.object({
 
 const EditBook = () => {
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      genre: "",
+      title:  "",
+      genre:  "",
       description: "",
     },
   });
